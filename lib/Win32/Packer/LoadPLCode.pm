@@ -5,8 +5,6 @@ $load_pl_code = do { local $/; <DATA> };
 
 __DATA__
 
-warn "hello!";
-
 my ($dir) = $0 =~ m|(.*)[/\\]| or die "unable to find loader path";
 @INC = ("$dir\\lib");
 
@@ -24,5 +22,3 @@ unless (defined $rc) {
     die if $@;
     die "Error loading $script: $^E";
 }
-
-warn "bye!!!";
