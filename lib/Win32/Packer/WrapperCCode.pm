@@ -37,7 +37,7 @@ static void xs_init(pTHX) {
 
 static void
 fatal_error(char *msg) {
-    fprintf(stderr, "%s: %s", msg, GetLastError());
+    //fprintf(stderr, "%s: %s", msg, GetLastError());
     exit(1);
 }
 
@@ -58,16 +58,16 @@ int main(int argc, char **argv, char **env) {
 
     size = GetFullPathNameA(module_path, MAX_PATH, long_module_path, &filepart);
     if (size <= 0) fatal_error("Unable to retrieve full program path");
-    fprintf(stderr, "long_module_path: %s\n", long_module_path);
+    //fprintf(stderr, "long_module_path: %s\n", long_module_path);
 
     size = filepart - long_module_path;
     memcpy(prog_path, long_module_path, size);
     prog_path[size] = '\0';
-    fprintf(stderr, "prog_path: %s\n", prog_path);
+    //fprintf(stderr, "prog_path: %s\n", prog_path);
 
     size = GetShortPathNameA(prog_path, short_path, MAX_PATH);
     if (size <= 0) fatal_error("Unable to retrieve short program path");
-    fprintf(stderr, "short_path: %s\n", short_path);
+    //fprintf(stderr, "short_path: %s\n", short_path);
 
     if (size + sizeof(loader_name) + 1 > MAX_PATH) {
         SetLastError(ERROR_BUFFER_OVERFLOW);
@@ -76,7 +76,7 @@ int main(int argc, char **argv, char **env) {
 
     strcpy(loader_path, short_path);
     strcat(loader_path, loader_name);
-    fprintf(stderr, "loader_path: %s\n", loader_path);
+    //fprintf(stderr, "loader_path: %s\n", loader_path);
 
     char **pargv = calloc(argc + 2, sizeof(char*));
     if (!pargv) fatal_error("Unable to allocate memory");
@@ -90,26 +90,26 @@ int main(int argc, char **argv, char **env) {
     int pargc = argc + 1;
 
     for (i = 0; i < pargc; i++) {
-        fprintf(stderr, "arg[%d]: %s\n", i, pargv[i]);
+        //fprintf(stderr, "arg[%d]: %s\n", i, pargv[i]);
     }
 
-    fprintf(stderr, "Launching perl!\n"); fflush(stderr);
+    //fprintf(stderr, "Launching perl!\n"); fflush(stderr);
 
     PERL_SYS_INIT3(&pargc, &pargv, &env);
     my_perl = perl_alloc();
     perl_construct(my_perl);
     PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
 
-    fprintf(stderr, "Parsing loader!\n"); fflush(stderr);
+    //fprintf(stderr, "Parsing loader!\n"); fflush(stderr);
     int rc = perl_parse(my_perl, xs_init, pargc, pargv, NULL);
 
-    fprintf(stderr, "rc: %d\n", rc);
+    //fprintf(stderr, "rc: %d\n", rc);
 
-    fprintf(stderr, "Running loader!\n"); fflush(stderr);
+    //fprintf(stderr, "Running loader!\n"); fflush(stderr);
     rc = perl_run(my_perl);
-    fprintf(stderr, "rc: %d\n", rc);
+    //fprintf(stderr, "rc: %d\n", rc);
 
-    fprintf(stderr, "Destroying!\n"); fflush(stderr);
+    //fprintf(stderr, "Destroying!\n"); fflush(stderr);
     perl_destruct(my_perl);
     perl_free(my_perl);
 }
